@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OME Video Template</title>
+  <script>
+    if (new URLSearchParams(window.location.search).get("capture") === "1") {
+      document.documentElement.classList.add("capture");
+    }
+  </script>
+  <style>
+    :root{
+      --ink:#12243a;
+      --muted:#617086;
+      --accent:#f0642f;
+      --line:rgba(18,36,58,.14);
+      --glass:rgba(255,255,255,.66);
+      --glass-strong:rgba(255,255,255,.82);
+      --shadow:0 18px 55px rgba(63,86,121,.12);
+      --radius:28px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;background:#e9eef7;font-family:"PingFang TC","Microsoft JhengHei","Noto Sans TC",Arial,sans-serif;color:var(--ink)}
+    body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px}
+    html.capture, html.capture body{width:100%;height:100%;overflow:hidden}
+    html.capture body{padding:0;background:#fff}
+    html.capture .player{width:100vw;height:100vh;border-radius:0;box-shadow:none}
+    html.capture .scene{display:none!important;opacity:0!important;transition:none!important}
+    html.capture .scene.active{display:block!important;opacity:1!important}
+    html.capture .controls{display:none!important}
+    html.capture .scene.active .anim-up,
+    html.capture .scene.active .anim-scale,
+    html.capture .scene.active .orb{animation:none!important;opacity:1!important;transform:none!important}
+
+    .player{
+      width:min(96vw,1440px);
+      aspect-ratio:16/9;
+      position:relative;
+      overflow:hidden;
+      border-radius:24px;
+      background:#fff;
+      box-shadow:0 30px 90px rgba(34,50,80,.22);
+    }
+
+    .scene{
+      position:absolute;inset:0;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .55s ease;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at 18% 22%, rgba(234,242,247,.55), transparent 30%),
+        radial-gradient(circle at 72% 24%, rgba(232,230,248,.48), transparent 34%),
+        radial-gradient(circle at 34% 80%, rgba(220,235,255,.36), transparent 30%),
+        linear-gradient(135deg,#f7fbff 0%, #f7f8fd 44%, #eef4ff 100%);
+    }
+    .scene.active{opacity:1;pointer-events:auto}
+
+    .brand{
+      position:absolute;
+      top:5.1%;
+      left:2.6%;
+      font-weight:850;
+      font-size:clamp(14px,1.6vw,25px);
+      letter-spacing:-.01em;
+      z-index:8;
+      color:#23354b;
+    }
+
+    .orb{
+      position:absolute;border-radius:50%;
+      filter:blur(.2px);
+      opacity:.94;
+      background:
+        radial-gradient(circle at 30% 28%, #ead39d 0%, #cfb17b 32%, #9b8daa 68%, #5f5b73 100%);
+      box-shadow:inset 0 0 26px rgba(255,255,255,.26);
+      z-index:1;
+    }
+    .orb.o1{width:15.2vw;height:15.2vw;right:-4.8vw;top:-4.9vw}
+    .orb.o2{width:8.8vw;height:8.8vw;left:-2.7vw;bottom:12.2%}
+    .orb.o3{width:4.2vw;height:4.2vw;right:-1.25vw;bottom:9.2%}
+
+    .wave{
+      position:absolute;left:-4%;right:-4%;bottom:-1.1%;height:23%;
+      z-index:2;opacity:.62;
+    }
+    .wave:before,.wave:after{
+      content:"";position:absolute;left:-3%;width:106%;height:100%;
+      transform-origin:center bottom;
+    }
+    .wave:before{
+      bottom:-52%;
+      border-radius:56% 44% 0 0 / 100% 100% 0 0;
+      background:linear-gradient(180deg,rgba(217,226,255,.32),rgba(232,240,255,.10));
+      transform:rotate(-2.5deg) scaleX(1.06);
+    }
+    .wave:after{
+      bottom:-61%;
+      border-radius:48% 52% 0 0 / 100% 100% 0 0;
+      background:linear-gradient(180deg,rgba(226,234,255,.36),rgba(242,246,255,.10));
+      transform:rotate(2.5deg) scaleX(1.12);
+    }
+
+    .title-wrap{
+      position:absolute;left:9%;right:9%;top:8.5%;
+      text-align:center;z-index:6;
+    }
+    .kicker{
+      display:inline-flex;align-items:center;gap:.45em;
+      font-size:clamp(12px,1.15vw,18px);
+      color:var(--muted);
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      margin-bottom:1.1%;
+    }
+    .page-title{
+      margin:0;
+      font-size:clamp(32px,4.6vw,74px);
+      line-height:1.08;
+      font-weight:900;
+      letter-spacing:-.035em;
+    }
+    .page-title .accent{color:var(--accent)}
+    .subtitle{
+      margin:1.2% auto 0;
+      max-width:72%;
+      font-size:clamp(14px,1.45vw,23px);
+      color:#53657a;
+      line-height:1.65;
+    }
+    .title-line{
+      width:13%;
+      height:3px;
+      background:var(--ink);
+      margin:2% auto 0;
+      opacity:.8;
+    }
+
+    .glass{
+      background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(255,255,255,.57));
+      border:1px solid rgba(255,255,255,.92);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
+    }
+
+    /* COVER */
+    #cover .cover-center{
+      position:absolute;left:8%;right:8%;top:49.2%;
+      transform:translateY(-50%);
+      text-align:center;z-index:7;
+    }
+    #cover h1{
+      margin:0;
+      font-size:clamp(42px,5.3vw,84px);
+      line-height:1.1;
+      font-weight:950;
+      letter-spacing:-.05em;
+      color:#0b0d13;
+    }
+    #cover .cover-line{
+      width:15.2%;
+      height:3px;
+      background:#1f2735;
+      margin:5.1% auto 0;
+      opacity:.92;
+    }
+    #cover .cover-subtitle{
+      margin:2.2% auto 0;
+      font-size:clamp(16px,1.65vw,27px);
+      color:#52637a;
+      font-weight:650;
+      letter-spacing:0;
+    }
+
+    /* ARCHITECTURE */
+    .arch-grid{
+      position:absolute;
+      left:7.2%;right:7.2%;
+      top:31%;
+      bottom:12.5%;
+      display:grid;
+      grid-template-columns:1fr 7% 1fr 7% 1.15fr;
+      align-items:center;
+      z-index:6;
+    }
+    .arch-card{
+      min-height:66%;
+      border-radius:var(--radius);
+      padding:8% 8% 7%;
+      display:flex;flex-direction:column;justify-content:center;
+      position:relative;
+    }
+    .arch-card .step{
+      width:52px;height:52px;border-radius:50%;
+      display:grid;place-items:center;
+      font-weight:900;font-size:21px;
+      background:#fff;
+      box-shadow:0 10px 30px rgba(63,86,121,.13);
+      margin-bottom:7%;
+    }
+    .arch-card h3{margin:0;font-size:clamp(18px,2vw,31px);line-height:1.2}
+    .arch-card p{margin:4% 0 0;color:var(--muted);font-size:clamp(13px,1.08vw,18px);line-height:1.6}
+    .chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:8%}
+    .chip{
+      font-size:clamp(11px,.9vw,15px);
+      padding:.58em .9em;border-radius:999px;
+      background:rgba(245,248,255,.95);
+      color:#43546a;border:1px solid rgba(91,111,145,.08);
+    }
+    .result-card{
+      min-height:82%;
+      border-radius:34px;
+      padding:8% 8%;
+      display:flex;flex-direction:column;justify-content:center;
+    }
+    .result-card .result-label{
+      font-size:clamp(12px,1vw,16px);
+      color:var(--accent);
+      font-weight:800;letter-spacing:.06em;
+      margin-bottom:5%;
+    }
+    .result-card h3{
+      margin:0;font-size:clamp(22px,2.3vw,38px);line-height:1.2;
+    }
+    .result-grid{
+      display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:7%;
+    }
+    .mini{
+      border-radius:18px;padding:13px 14px;background:rgba(255,255,255,.72);
+      border:1px solid rgba(18,36,58,.07);
+    }
+    .mini b{display:block;font-size:clamp(12px,1vw,16px);margin-bottom:4px}
+    .mini span{font-size:clamp(10px,.85vw,13px);color:var(--muted);line-height:1.45}
+
+    .arrow{
+      height:2px;background:linear-gradient(90deg,rgba(93,112,142,.18),rgba(93,112,142,.75));
+      position:relative;margin:0 14%;
+    }
+    .arrow:after{
+      content:"";position:absolute;right:-2px;top:50%;
+      width:10px;height:10px;border-top:2px solid #738199;border-right:2px solid #738199;
+      transform:translateY(-50%) rotate(45deg);
+    }
+
+    /* FOUR STEP */
+    .steps-grid{
+      position:absolute;left:5.7%;right:5.7%;top:32%;bottom:14%;
+      display:grid;grid-template-columns:repeat(4,1fr);gap:2.1%;z-index:6;
+    }
+    .step-card{
+      border-radius:28px;padding:8% 8% 7%;
+      position:relative;
+      display:flex;flex-direction:column;
+      min-width:0;
+    }
+    .step-badge{
+      width:48px;height:48px;border-radius:50%;display:grid;place-items:center;
+      font-weight:900;background:#fff;box-shadow:0 10px 30px rgba(54,74,107,.12);
+      margin-bottom:9%;
+      color:#24334a;
+    }
+    .step-card h3{font-size:clamp(16px,1.7vw,27px);margin:0 0 3%;line-height:1.2}
+    .step-card .desc{font-size:clamp(11px,.9vw,15px);color:var(--muted);line-height:1.55}
+    .step-icon{
+      margin-top:10%;
+      width:72px;height:72px;border-radius:22px;
+      display:grid;place-items:center;font-size:33px;
+      background:rgba(255,255,255,.84);
+      border:1px solid rgba(65,88,130,.08);
+    }
+    .feature-list{margin-top:auto;display:grid;gap:9px;padding-top:9%}
+    .feature{
+      font-size:clamp(11px,.88vw,14px);
+      padding:10px 12px;
+      border-radius:14px;background:rgba(255,255,255,.58);
+      border:1px solid rgba(61,81,113,.06);
+    }
+    .feedback-bar{
+      position:absolute;left:18%;right:18%;bottom:7%;
+      height:8.5%;border-radius:22px;z-index:7;
+      display:flex;align-items:center;justify-content:center;gap:4%;
+      font-size:clamp(11px,1vw,16px);
+    }
+    .feedback-bar b{font-size:clamp(13px,1.1vw,18px)}
+
+    /* ROADMAP */
+    .roadmap-grid{
+      position:absolute;left:6%;right:6%;top:31%;bottom:17%;
+      display:grid;grid-template-columns:repeat(3,1fr);gap:2.3%;z-index:6;
+    }
+    .road-card{
+      border-radius:30px;padding:7% 7% 6%;
+      display:flex;flex-direction:column;
+      position:relative;
+    }
+    .road-top{display:flex;align-items:center;gap:12px}
+    .road-num{
+      width:52px;height:52px;border-radius:50%;display:grid;place-items:center;
+      font-weight:950;background:#fff;box-shadow:0 10px 30px rgba(55,75,108,.12);
+    }
+    .road-card h3{margin:0;font-size:clamp(17px,1.8vw,29px);line-height:1.2}
+    .road-card p{color:var(--muted);font-size:clamp(11px,.93vw,15px);line-height:1.6;margin:5% 0 0}
+    .road-items{
+      display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:7%;
+    }
+    .road-item{
+      min-height:76px;border-radius:16px;background:rgba(255,255,255,.62);
+      border:1px solid rgba(67,88,125,.07);padding:12px;
+      display:flex;flex-direction:column;justify-content:center;
+    }
+    .road-item b{font-size:clamp(11px,.95vw,15px)}
+    .road-item span{font-size:clamp(9px,.78vw,12px);color:var(--muted);margin-top:4px;line-height:1.35}
+    .deliver{
+      margin-top:auto;border-radius:15px;padding:11px 13px;
+      background:rgba(255,255,255,.8);
+      font-size:clamp(10px,.88vw,14px);
+      font-weight:700;
+    }
+    .timeline{
+      position:absolute;left:13%;right:13%;bottom:7%;
+      height:5.6%;z-index:7;display:flex;align-items:center;
+    }
+    .timeline:before{
+      content:"";position:absolute;left:0;right:0;top:50%;height:2px;background:rgba(65,85,118,.17)
+    }
+    .timeline span{
+      position:relative;z-index:2;
+      width:33.333%;
+      text-align:center;
+      font-size:clamp(10px,.86vw,14px);
+      font-weight:800;
+    }
+    .timeline span:before{
+      content:"";display:block;margin:0 auto 6px;
+      width:12px;height:12px;border-radius:50%;
+      background:#fff;border:3px solid #8e9cb2;
+      box-shadow:0 3px 10px rgba(61,80,110,.14);
+    }
+
+    /* SOURCES */
+    .sources-grid{
+      position:absolute;left:6%;right:6%;top:31%;bottom:19%;
+      display:grid;grid-template-columns:repeat(4,1fr);gap:1.8%;z-index:6;
+    }
+    .source-card{
+      border-radius:26px;padding:8% 7% 7%;
+      display:flex;flex-direction:column;min-width:0;
+    }
+    .source-card .value{
+      color:var(--accent);font-size:clamp(11px,.95vw,15px);
+      font-weight:850;letter-spacing:.05em;text-transform:uppercase;
+      margin-bottom:7%;
+    }
+    .source-card h3{
+      margin:0;font-size:clamp(16px,1.55vw,25px);line-height:1.24;
+    }
+    .source-card p{
+      color:var(--muted);font-size:clamp(10px,.86vw,14px);line-height:1.62;margin:7% 0 0;
+    }
+    .source-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:8%}
+    .source-tags span{
+      border-radius:999px;background:rgba(255,255,255,.72);
+      border:1px solid rgba(61,81,113,.07);
+      padding:.55em .78em;font-size:clamp(10px,.78vw,12px);color:#45566c;
+    }
+    .sources-note{
+      position:absolute;left:18%;right:18%;bottom:7%;
+      min-height:8%;border-radius:22px;z-index:7;
+      display:flex;align-items:center;justify-content:center;
+      padding:0 3%;font-size:clamp(12px,1vw,16px);line-height:1.5;color:#33465d;text-align:center;
+    }
+
+    /* ENDING */
+    #ending .ending-center{
+      position:absolute;left:10%;right:10%;top:25%;transform:translateY(-50%);
+      text-align:center;z-index:7;
+    }
+    #ending h2{
+      margin:0;font-size:clamp(38px,5vw,80px);letter-spacing:-.04em;
+    }
+    #ending p{
+      font-size:clamp(15px,1.5vw,23px);color:var(--muted);margin:2% 0 0;
+    }
+    .ending-visual{
+      position:absolute;left:8%;right:8%;top:42%;bottom:9%;
+      z-index:6;border-radius:30px;padding:2.8% 4%;
+      display:grid;grid-template-columns:1fr 1.25fr;gap:4%;align-items:center;
+    }
+    .flywheel{
+      position:relative;width:min(33vw,430px);aspect-ratio:1;margin:auto;
+    }
+    .flywheel-center{
+      position:absolute;inset:31%;border-radius:50%;display:grid;place-items:center;
+      background:#12243a;color:#fff;font-size:clamp(19px,2vw,33px);font-weight:900;
+      box-shadow:0 18px 45px rgba(18,36,58,.22);
+    }
+    .flywheel-ring{
+      position:absolute;width:35%;height:35%;border-radius:50%;
+      display:grid;place-items:center;text-align:center;padding:8px;
+      background:rgba(255,255,255,.84);border:1px solid rgba(18,36,58,.08);
+      box-shadow:0 12px 34px rgba(63,86,121,.13);
+      font-size:clamp(12px,1vw,16px);font-weight:850;color:#263a52;
+    }
+    .flywheel-ring.r1{left:32.5%;top:0}
+    .flywheel-ring.r2{right:0;top:32.5%}
+    .flywheel-ring.r3{left:32.5%;bottom:0}
+    .flywheel-ring.r4{left:0;top:32.5%}
+    .flywheel-line{
+      position:absolute;inset:17%;border:3px solid rgba(240,100,47,.28);
+      border-radius:50%;border-left-color:rgba(18,36,58,.13);
+      transform:rotate(28deg);
+    }
+    .ending-list{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .ending-item{
+      border-radius:18px;padding:17px 18px;background:rgba(255,255,255,.72);
+      border:1px solid rgba(18,36,58,.07);min-height:92px;
+      display:flex;flex-direction:column;justify-content:center;
+    }
+    .ending-item b{font-size:clamp(14px,1.2vw,20px);margin-bottom:8px}
+    .ending-item span{font-size:clamp(11px,.9vw,15px);line-height:1.45;color:var(--muted)}
+
+    /* CONTROL */
+    .controls{
+      position:absolute;left:50%;bottom:2.2%;transform:translateX(-50%);
+      z-index:20;display:flex;gap:8px;padding:8px 10px;
+      border-radius:999px;background:rgba(15,26,43,.76);backdrop-filter:blur(14px);
+    }
+    .controls button{
+      border:0;color:#fff;background:rgba(255,255,255,.13);
+      border-radius:999px;padding:8px 12px;font-size:12px;cursor:pointer
+    }
+    .controls button:hover{background:rgba(255,255,255,.23)}
+    .controls .status{
+      color:#dbe4f0;font-size:12px;display:flex;align-items:center;padding:0 5px;
+      min-width:80px;justify-content:center;
+    }
+
+    /* motion */
+    .scene.active .anim-up{animation:up .75s cubic-bezier(.2,.8,.2,1) both}
+    .scene.active .anim-up.d2{animation-delay:.14s}
+    .scene.active .anim-up.d3{animation-delay:.28s}
+    .scene.active .anim-up.d4{animation-delay:.42s}
+    .scene.active .anim-scale{animation:scale .72s cubic-bezier(.2,.8,.2,1) both}
+    .scene.active .anim-scale.d2{animation-delay:.14s}
+    .scene.active .anim-scale.d3{animation-delay:.28s}
+    .scene.active .anim-scale.d4{animation-delay:.42s}
+    .scene.active .orb{animation:float 8s ease-in-out infinite alternate}
+    .scene.active .orb.o2{animation-delay:-1.8s}
+    .scene.active .orb.o3{animation-delay:-3.2s}
+    @keyframes up{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes scale{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+    @keyframes float{from{transform:translateY(-8px) translateX(0)}to{transform:translateY(10px) translateX(5px)}}
+
+    @media(max-width:900px){
+      body{padding:0}
+      .player{width:100vw;border-radius:0}
+      .controls{bottom:1.4%}
+    }
+  </style>
+</head>
+
+<body>
+  <main class="player" id="player">
+
+    <!-- Scene 1: Cover -->
+    <section class="scene active" id="cover" data-duration="4.5">
+      <div class="brand" data-bind="brand"></div>
+      <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+      <div class="wave"></div>
+
+      <div class="cover-center">
+        <h1 class="anim-up" data-bind="coverTitle"></h1>
+        <p class="cover-subtitle anim-up d2" data-bind="coverSubtitle"></p>
+        <div class="cover-line anim-scale d2"></div>
+      </div>
+    </section>
+
+    <!-- Scene 2: Architecture -->
+    <section class="scene" id="architecture" data-duration="8">
+      <div class="brand" data-bind="brand"></div>
+      <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+      <div class="wave"></div>
+
+      <header class="title-wrap">
+        <div class="kicker anim-up" data-bind="architecture.kicker"></div>
+        <h2 class="page-title anim-up d2" data-html="architecture.title"></h2>
+        <div class="subtitle anim-up d3" data-bind="architecture.subtitle"></div>
+      </header>
+
+      <div class="arch-grid">
+        <article class="arch-card glass anim-scale" id="arch1"></article>
+        <div class="arrow anim-scale d2"></div>
+        <article class="arch-card glass anim-scale d2" id="arch2"></article>
+        <div class="arrow anim-scale d3"></div>
+        <article class="result-card glass anim-scale d4" id="archResult"></article>
+      </div>
+    </section>
+
+    <!-- Scene 3: Four Step -->
+    <section class="scene" id="fourstep" data-duration="8">
+      <div class="brand" data-bind="brand"></div>
+      <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+      <div class="wave"></div>
+
+      <header class="title-wrap">
+        <div class="kicker anim-up" data-bind="fourStep.kicker"></div>
+        <h2 class="page-title anim-up d2" data-html="fourStep.title"></h2>
+        <div class="subtitle anim-up d3" data-bind="fourStep.subtitle"></div>
+      </header>
+
+      <div class="steps-grid" id="stepsGrid"></div>
+      <div class="feedback-bar glass anim-up d4" id="feedbackBar"></div>
+    </section>
+
+    <!-- Scene 4: Roadmap -->
+    <section class="scene" id="roadmap" data-duration="8">
+      <div class="brand" data-bind="brand"></div>
+      <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+      <div class="wave"></div>
+
+      <header class="title-wrap">
+        <div class="kicker anim-up" data-bind="roadmap.kicker"></div>
+        <h2 class="page-title anim-up d2" data-html="roadmap.title"></h2>
+        <div class="subtitle anim-up d3" data-bind="roadmap.subtitle"></div>
+      </header>
+
+      <div class="roadmap-grid" id="roadmapGrid"></div>
+      <div class="timeline" id="timeline"></div>
+    </section>
+
+    <!-- Scene 5: Ending -->
+    <section class="scene" id="ending" data-duration="7">
+      <div class="brand" data-bind="brand"></div>
+      <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+      <div class="wave"></div>
+
+      <div class="ending-center">
+        <h2 class="anim-up" data-bind="ending.title"></h2>
+        <p class="anim-up d2" data-bind="ending.subtitle"></p>
+      </div>
+      <div class="ending-visual glass anim-scale d3" id="endingVisual"></div>
+    </section>
+
+    <!-- Scene 6: Data Sources -->
+    <section class="scene" id="sources" data-duration="4">
+      <div class="brand" data-bind="brand"></div>
+      <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+      <div class="wave"></div>
+
+      <header class="title-wrap">
+        <div class="kicker anim-up" data-bind="dataSources.kicker"></div>
+        <h2 class="page-title anim-up d2" data-html="dataSources.title"></h2>
+        <div class="subtitle anim-up d3" data-bind="dataSources.subtitle"></div>
+      </header>
+
+      <div class="sources-grid" id="sourcesGrid"></div>
+      <div class="sources-note glass anim-up d4" data-bind="dataSources.note"></div>
+    </section>
+
+    <div class="controls">
+      <button id="prev">上一頁</button>
+      <button id="play">播放</button>
+      <button id="next">下一頁</button>
+      <div class="status" id="status">1 / 6</div>
+    </div>
+  </main>
+
+  <script src="./data.js"></script>
+  <script>
+    const DATA = window.OME_VIDEO_DATA;
+
+    const bind = (path) => path.split('.').reduce((o,k)=>o?.[k], DATA);
+
+    document.querySelectorAll("[data-bind]").forEach(el=>{
+      el.textContent = bind(el.dataset.bind) ?? "";
+    });
+    document.querySelectorAll("[data-html]").forEach(el=>{
+      el.innerHTML = bind(el.dataset.html) ?? "";
+    });
+
+    // Architecture
+    DATA.architecture.cards.forEach((c,i)=>{
+      const el = document.getElementById("arch"+(i+1));
+      el.innerHTML = `
+        <div class="step">${c.step}</div>
+        <h3>${c.title}</h3>
+        <p>${c.desc}</p>
+        <div class="chips">${c.chips.map(x=>`<span class="chip">${x}</span>`).join("")}</div>
+      `;
+    });
+    document.getElementById("archResult").innerHTML = `
+      <div class="result-label">${DATA.architecture.result.label}</div>
+      <h3>${DATA.architecture.result.title}</h3>
+      <div class="result-grid">
+        ${DATA.architecture.result.items.map(i=>`
+          <div class="mini"><b>${i[0]}</b><span>${i[1]}</span></div>
+        `).join("")}
+      </div>
+    `;
+
+    // Four step
+    document.getElementById("stepsGrid").innerHTML = DATA.fourStep.steps.map((s,i)=>`
+      <article class="step-card glass anim-scale d${Math.min(i+1,4)}">
+        <div class="step-badge">${s.n}</div>
+        <h3>${s.title}</h3>
+        <div class="desc">${s.desc}</div>
+        <div class="step-icon">${s.icon}</div>
+        <div class="feature-list">${s.features.map(f=>`<div class="feature">${f}</div>`).join("")}</div>
+      </article>
+    `).join("");
+    document.getElementById("feedbackBar").innerHTML =
+      `<b>${DATA.fourStep.feedback[0]}</b>` +
+      DATA.fourStep.feedback.slice(1).map(x=>`<span>${x}</span>`).join("");
+
+    // Roadmap
+    document.getElementById("roadmapGrid").innerHTML = DATA.roadmap.stages.map((s,i)=>`
+      <article class="road-card glass anim-scale d${Math.min(i+1,4)}">
+        <div class="road-top"><div class="road-num">${s.n}</div><h3>${s.title}</h3></div>
+        <p>${s.desc}</p>
+        <div class="road-items">
+          ${s.items.map(x=>`<div class="road-item"><b>${x[0]}</b><span>${x[1]}</span></div>`).join("")}
+        </div>
+        <div class="deliver">${s.deliver}</div>
+      </article>
+    `).join("");
+    document.getElementById("timeline").innerHTML =
+      DATA.roadmap.timeline.map(x=>`<span>${x}</span>`).join("");
+
+    // Data sources
+    if (DATA.dataSources) {
+      document.getElementById("sourcesGrid").innerHTML = DATA.dataSources.cards.map((s,i)=>`
+        <article class="source-card glass anim-scale d${Math.min(i+1,4)}">
+          <div class="value">${s.value}</div>
+          <h3>${s.title}</h3>
+          <p>${s.desc}</p>
+          <div class="source-tags">${s.tags.map(t=>`<span>${t}</span>`).join("")}</div>
+        </article>
+      `).join("");
+    }
+
+    // Ending visual
+    if (DATA.ending.visual) {
+      const v = DATA.ending.visual;
+      document.getElementById("endingVisual").innerHTML = `
+        <div class="flywheel">
+          <div class="flywheel-line"></div>
+          <div class="flywheel-center">${v.center}</div>
+          ${v.rings.map((x,i)=>`<div class="flywheel-ring r${i+1}">${x}</div>`).join("")}
+        </div>
+        <div class="ending-list">
+          ${v.items.map(i=>`<div class="ending-item"><b>${i[0]}</b><span>${i[1]}</span></div>`).join("")}
+        </div>
+      `;
+    }
+
+    // Player
+    const scenes = [...document.querySelectorAll(".scene")];
+    let current = 0;
+    let playing = false;
+    let timer = null;
+
+    function showScene(index){
+      scenes[current].classList.remove("active");
+      current = (index + scenes.length) % scenes.length;
+      // force animation restart
+      const s = scenes[current];
+      s.classList.remove("active");
+      void s.offsetWidth;
+      s.classList.add("active");
+      document.getElementById("status").textContent = `${current+1} / ${scenes.length}`;
+    }
+
+    function scheduleNext(){
+      if(!playing) return;
+      const duration = parseFloat(scenes[current].dataset.duration || "6") * 1000;
+      clearTimeout(timer);
+      timer = setTimeout(()=>{
+        showScene(current+1);
+        scheduleNext();
+      }, duration);
+    }
+
+    document.getElementById("prev").onclick = ()=>{ showScene(current-1); if(playing) scheduleNext(); };
+    document.getElementById("next").onclick = ()=>{ showScene(current+1); if(playing) scheduleNext(); };
+    document.getElementById("play").onclick = ()=>{
+      playing = !playing;
+      document.getElementById("play").textContent = playing ? "暫停" : "播放";
+      if(playing) scheduleNext(); else clearTimeout(timer);
+    };
+
+    document.addEventListener("keydown",e=>{
+      if(e.key==="ArrowRight") document.getElementById("next").click();
+      if(e.key==="ArrowLeft") document.getElementById("prev").click();
+      if(e.key===" ") { e.preventDefault(); document.getElementById("play").click(); }
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    const fixedScene = Number(params.get("scene"));
+    if (params.get("capture") === "1") {
+      document.querySelector(".controls").style.display = "none";
+    }
+    if (Number.isInteger(fixedScene) && fixedScene >= 1 && fixedScene <= scenes.length) {
+      showScene(fixedScene - 1);
+    }
+  </script>
+</body>
+</html>
