@@ -23,6 +23,8 @@ Create a premium presentation-style HTML video template inspired by the OME PPT 
 - The cover title is centered with a thin underline beneath it.
 - Content pages keep the same shell: brand, top title zone, decorative orbs, bottom wave.
 - Use soft glassmorphism cards for content.
+- Additional widget pages should still feel like presentation pages, not dense dashboards.
+- Prefer 2-4 strong widgets per page; split crowded material into another scene.
 
 ## Motion Principles
 - Title fades in and rises slightly.
@@ -36,3 +38,4 @@ Create a premium presentation-style HTML video template inspired by the OME PPT 
 - Do not switch to dark mode.
 - Do not add too many icons or chart-like decorations.
 - Do not break consistency with the cover page.
+- Do not use widgets as a reason to shrink text until it becomes unreadable.

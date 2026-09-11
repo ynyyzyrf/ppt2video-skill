@@ -7,6 +7,7 @@ Codex skills for the OME HTML scene to T2V PPT video workflow.
 - `skills/ome-fixed-video-template`
   - Generates or updates OME-style HTML video scenes.
   - Uses `template/data.js` as the ordinary content-editing surface.
+  - Supports optional `extraScenes` with reusable widgets such as metrics, comparisons, matrices, checklists, quotes, timelines, processes, stacks, and tag clouds.
   - Supports capture URLs such as `template/index.html?scene=1&capture=1`.
 
 - `skills/t2v-ppt-video`

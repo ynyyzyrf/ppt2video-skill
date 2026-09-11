@@ -15,4 +15,5 @@ screenshots/
 *.pptx
 *.ppt
 *.log
+tmp-*.png
 t2v-result*.json

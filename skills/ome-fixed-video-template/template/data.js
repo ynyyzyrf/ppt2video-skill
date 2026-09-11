@@ -75,5 +75,32 @@ window.OME_VIDEO_DATA = {
       ending:{
         title:"讓 AI 真正服務業務",
         subtitle:"從一個案例開始，逐步形成可複製、可持續優化的通用能力"
-      }
+      },
+
+      extraScenes:[
+        {
+          kicker:"WIDGET TOOLKIT",
+          title:'可組合的 <span class="accent">PPT</span> 小組件',
+          subtitle:"同一套 OME 視覺下，可以插入指標、對比、矩陣、清單和引用等信息塊",
+          layout:"grid-3",
+          duration:8,
+          widgets:[
+            {type:"metric",label:"KPI",title:"首個版本",value:"7 天",note:"從素材整理到可演示版本",trend:"適合進度同步"},
+            {type:"comparison",label:"BEFORE / AFTER",title:"前後對比",desc:"用於表達改造收益",items:[["改造前","文檔分散，回答依賴人工"],["改造後","知識統一，AI 可多端使用"]]},
+            {type:"checklist",label:"CHECKLIST",title:"落地檢查",items:[["知識源","文檔、FAQ、流程齊備"],["評測集","有標準問題與答案"],["渠道","Web 或企業微信可用"]]}
+          ]
+        },
+        {
+          kicker:"WIDGET TOOLKIT",
+          title:'流程、時間線與 <span class="accent">標籤</span>',
+          subtitle:"用於講解方案路線、產品分層、能力範圍和風險邊界",
+          layout:"grid-3",
+          duration:8,
+          widgets:[
+            {type:"process",label:"PROCESS",title:"交付流程",items:[["整理","知識結構化"],["接入","Agent 與渠道"],["評測","效果觀測"],["迭代","持續優化"]]},
+            {type:"timeline",label:"TIMELINE",title:"節奏安排",items:[["本周","跑通一個場景"],["本月","接入人物上下文"],["下月","複製更多案例"],["長期","沉澱通用能力"]]},
+            {type:"tags",label:"SCOPE",title:"能力標籤",items:["RAG","Agent","Langfuse","多端入口","知識治理","權限","評測","運維"]}
+          ]
+        }
+      ]
     };
