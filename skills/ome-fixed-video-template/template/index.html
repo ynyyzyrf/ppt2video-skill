@@ -5,8 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OME Video Template</title>
   <script>
-    if (new URLSearchParams(window.location.search).get("capture") === "1") {
+    const bootParams = new URLSearchParams(window.location.search);
+    if (bootParams.get("capture") === "1") {
       document.documentElement.classList.add("capture");
+    }
+    if (bootParams.has("scene")) {
+      document.documentElement.classList.add("fixed-scene");
     }
   </script>
   <style>
@@ -33,6 +37,10 @@
     html.capture .scene.active .anim-up,
     html.capture .scene.active .anim-scale,
     html.capture .scene.active .orb{animation:none!important;opacity:1!important;transform:none!important}
+    html.fixed-scene .scene{transition:none!important}
+    html.fixed-scene .scene.active .anim-up,
+    html.fixed-scene .scene.active .anim-scale,
+    html.fixed-scene .scene.active .orb{animation:none!important;opacity:1!important;transform:none!important}
 
     .player{
       width:min(96vw,1440px);
@@ -247,7 +255,7 @@
 
     /* FOUR STEP */
     .steps-grid{
-      position:absolute;left:5.7%;right:5.7%;top:32%;bottom:14%;
+      position:absolute;left:5.7%;right:5.7%;top:32%;bottom:17.2%;
       display:grid;grid-template-columns:repeat(4,1fr);gap:2.1%;z-index:6;
     }
     .step-card{
@@ -387,6 +395,7 @@
       border-radius:26px;padding:24px 26px;
       min-width:0;min-height:0;
       display:flex;flex-direction:column;
+      overflow:hidden;
     }
     .widget .label{
       color:var(--accent);font-size:clamp(11px,.9vw,14px);
@@ -425,11 +434,11 @@
     .role-grid{grid-template-columns:repeat(auto-fit,minmax(135px,1fr))}
     .signal-grid{grid-template-columns:repeat(auto-fit,minmax(135px,1fr))}
     .kpi-grid{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}
-    .risk-grid{grid-template-columns:repeat(auto-fit,minmax(145px,1fr))}
-    .contract-grid{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+    .risk-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:14px}
+    .contract-grid{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:9px;margin-top:14px}
     .role-card,.signal-card,.kpi-card,.risk-card,.contract-card,.industry-card,.fit-card,.stack-layer,.road-gate,.loop-step{
       border-radius:16px;background:rgba(255,255,255,.68);
-      border:1px solid rgba(18,36,58,.07);padding:13px 14px;min-width:0;
+      border:1px solid rgba(18,36,58,.07);padding:12px 13px;min-width:0;
     }
     .role-card b,.signal-card b,.kpi-card b,.risk-card b,.contract-card b,.industry-card b,.fit-card b,.stack-layer b,.road-gate b,.loop-step b{
       display:block;font-size:clamp(12px,1vw,16px);margin-bottom:5px;
@@ -516,8 +525,9 @@
 
     /* CONTROL */
     .controls{
-      position:absolute;left:50%;bottom:2.2%;transform:translateX(-50%);
-      z-index:20;display:flex;gap:8px;padding:8px 10px;
+      position:absolute;left:50%;bottom:1%;transform:translateX(-50%) scale(.9);
+      transform-origin:center bottom;
+      z-index:20;display:flex;gap:8px;padding:7px 9px;
       border-radius:999px;background:rgba(15,26,43,.76);backdrop-filter:blur(14px);
     }
     .controls button{
@@ -529,6 +539,20 @@
       color:#dbe4f0;font-size:12px;display:flex;align-items:center;padding:0 5px;
       min-width:80px;justify-content:center;
     }
+
+    html:not(.capture) .feedback-bar{bottom:10%;height:7.2%}
+    html:not(.capture) #fourstep .steps-grid{bottom:20%}
+    html:not(.capture) #fourstep .step-card{padding:6.5% 7% 6%}
+    html:not(.capture) #fourstep .step-badge{width:42px;height:42px;margin-bottom:6%}
+    html:not(.capture) #fourstep .step-icon{width:58px;height:58px;border-radius:18px;margin-top:7%;font-size:26px}
+    html:not(.capture) #fourstep .feature-list{gap:7px;padding-top:6%}
+    html:not(.capture) #fourstep .feature{padding:8px 10px;font-size:clamp(10px,.82vw,13px)}
+    html:not(.capture) .widget-grid{bottom:13.5%}
+    html:not(.capture) .risk-grid{gap:7px}
+    html:not(.capture) .risk-card{padding:9px 11px}
+    html:not(.capture) .risk-card b{font-size:clamp(11px,.9vw,14px);margin-bottom:3px}
+    html:not(.capture) .risk-card span{font-size:clamp(9px,.76vw,12px);line-height:1.28}
+    html:not(.capture) .risk-level{padding:.28em .58em;margin-bottom:5px;font-size:clamp(8px,.68vw,11px)}
 
     /* motion */
     .scene.active .anim-up{animation:up .75s cubic-bezier(.2,.8,.2,1) both}
@@ -548,8 +572,18 @@
 
     @media(max-width:900px){
       body{padding:0}
-      .player{width:100vw;border-radius:0}
-      .controls{bottom:1.4%}
+      html:not(.capture),html:not(.capture) body{height:100%;overflow:hidden}
+      html:not(.capture) .player{width:100vw;height:100vh;aspect-ratio:auto;border-radius:0}
+      html:not(.capture) .widget-grid{left:5.4%;right:5.4%;top:25%;bottom:15.5%;gap:12px}
+      html:not(.capture) #fourstep .steps-grid{left:5.4%;right:5.4%;top:31%;bottom:21%}
+      html:not(.capture) .widget{border-radius:24px;padding:18px}
+      html:not(.capture) .page-title{font-size:clamp(28px,7vw,48px)}
+      html:not(.capture) .subtitle{font-size:clamp(12px,2.7vw,17px);max-width:88%}
+      html:not(.capture) .feedback-bar{left:5.4%;right:5.4%;bottom:10.5%;height:6.5%}
+      html:not(.capture) .controls{bottom:1.2%;transform:translateX(-50%) scale(.82)}
+      html:not(.capture) .risk-grid{gap:7px;margin-top:10px}
+      html:not(.capture) .contract-grid{gap:7px;margin-top:10px}
+      html:not(.capture) .risk-card,html:not(.capture) .contract-card{border-radius:13px;padding:8px 10px}
     }
   </style>
 </head>
