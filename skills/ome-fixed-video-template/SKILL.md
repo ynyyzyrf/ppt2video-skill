@@ -73,6 +73,29 @@ Supported widget types:
 
 For `items`, use either arrays like `["Title", "Text"]` or objects like `{title: "Title", text: "Text"}`. Keep each widget to 1-4 short facts. If a page starts to feel crowded, create another `extraScenes` page instead of shrinking text.
 
+## Research Explainer Pack
+
+For market research, strategy, product, or FDE-style reports, prefer these semantic widgets over generic cards. They are designed to turn long reports into a clear narrated deck:
+
+- `role-comparison`: compare adjacent roles or concepts. Use `roles: [{title, goal, code}]`.
+- `delivery-loop`: show a value flywheel or closed delivery loop. Use `center` and `steps`.
+- `solution-stack`: explain 3-5 layers of an architecture or solution. Use `layers: [{n, title, text, tags}]`.
+- `industry-matrix`: summarize industry scenarios and KPIs. Use `industries: [{industry, solution, kpi}]`.
+- `market-signals`: show why the market is moving now. Use `signals: [{name, signal, note}]`.
+- `fit-checker`: show when a solution fits or does not fit. Use `fit` and `noFit` arrays.
+- `kpi-scorecard`: group technical, workflow, adoption, and financial metrics. Use `kpis: [{title, value, text}]`.
+- `risk-register`: present risks with severity labels. Use `risks: [{level, title, text}]`.
+- `contract-checklist`: turn procurement or governance advice into checklist groups. Use `groups: [{title, items}]`.
+- `sprint-roadmap`: show staged adoption gates. Use `gates: [{title, text}]`.
+
+For an FDE research explainer, a strong default sequence is:
+
+1. `role-comparison` + `delivery-loop`
+2. `solution-stack` + `industry-matrix`
+3. `market-signals` + `fit-checker`
+4. `kpi-scorecard` + `risk-register` + `contract-checklist`
+5. `sprint-roadmap`
+
 ## Content Limits
 
 - Cover title: 18 Chinese characters or fewer when possible.

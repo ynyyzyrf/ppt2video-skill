@@ -421,6 +421,49 @@
     .stack-row{display:grid;grid-template-columns:18% 1fr;gap:12px;align-items:center}
     .tag-cloud{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
     .tag-cloud span{border-radius:999px;background:rgba(255,255,255,.72);border:1px solid rgba(61,81,113,.08);padding:.62em .9em;font-size:clamp(11px,.9vw,14px);color:#45566c}
+    .role-grid,.signal-grid,.kpi-grid,.risk-grid,.contract-grid{display:grid;gap:12px;margin-top:18px}
+    .role-grid{grid-template-columns:repeat(auto-fit,minmax(135px,1fr))}
+    .signal-grid{grid-template-columns:repeat(auto-fit,minmax(135px,1fr))}
+    .kpi-grid{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}
+    .risk-grid{grid-template-columns:repeat(auto-fit,minmax(145px,1fr))}
+    .contract-grid{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+    .role-card,.signal-card,.kpi-card,.risk-card,.contract-card,.industry-card,.fit-card,.stack-layer,.road-gate,.loop-step{
+      border-radius:16px;background:rgba(255,255,255,.68);
+      border:1px solid rgba(18,36,58,.07);padding:13px 14px;min-width:0;
+    }
+    .role-card b,.signal-card b,.kpi-card b,.risk-card b,.contract-card b,.industry-card b,.fit-card b,.stack-layer b,.road-gate b,.loop-step b{
+      display:block;font-size:clamp(12px,1vw,16px);margin-bottom:5px;
+    }
+    .role-card span,.signal-card span,.kpi-card span,.risk-card span,.contract-card span,.industry-card span,.fit-card span,.stack-layer span,.road-gate span,.loop-step span{
+      display:block;font-size:clamp(10px,.82vw,13px);line-height:1.38;color:var(--muted);
+    }
+    .role-code{display:inline-flex;margin-top:8px;border-radius:999px;padding:.38em .7em;background:rgba(18,36,58,.07);font-size:clamp(9px,.75vw,12px);font-weight:800;color:#31445c}
+    .loop-wrap{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:20px;align-items:stretch}
+    .loop-step{position:relative;text-align:center}
+    .loop-step:after{content:"";position:absolute;right:-9px;top:50%;width:12px;height:2px;background:rgba(240,100,47,.34)}
+    .loop-step:last-child:after{display:none}
+    .loop-center{margin:18px auto 0;border-radius:999px;background:#12243a;color:#fff;padding:.72em 1.2em;font-weight:900;font-size:clamp(12px,1vw,16px)}
+    .solution-stack{display:grid;gap:10px;margin-top:18px}
+    .stack-layer{display:grid;grid-template-columns:18% 1fr 26%;gap:14px;align-items:center}
+    .layer-num{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#fff;box-shadow:0 10px 26px rgba(63,86,121,.12);font-weight:900}
+    .layer-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+    .layer-tags em{font-style:normal;border-radius:999px;background:rgba(240,100,47,.08);color:#be4d25;padding:.38em .62em;font-size:clamp(9px,.74vw,11px)}
+    .industry-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-top:18px}
+    .industry-card{min-height:92px}
+    .industry-card small{display:block;color:var(--accent);font-size:clamp(9px,.72vw,11px);font-weight:850;margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase}
+    .fit-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+    .fit-card.good{border-color:rgba(33,128,92,.18)}
+    .fit-card.bad{border-color:rgba(192,70,55,.18)}
+    .fit-card .mark{display:inline-flex;margin-bottom:8px;border-radius:999px;padding:.42em .78em;font-size:clamp(10px,.78vw,12px);font-weight:900}
+    .fit-card.good .mark{background:rgba(33,128,92,.1);color:#207656}
+    .fit-card.bad .mark{background:rgba(192,70,55,.1);color:#b04737}
+    .kpi-value{font-size:clamp(22px,2.1vw,34px);font-weight:950;color:#13243a;line-height:1.05;margin:6px 0}
+    .risk-level{display:inline-flex;border-radius:999px;padding:.38em .68em;margin-bottom:8px;font-size:clamp(9px,.75vw,12px);font-weight:900;background:rgba(240,100,47,.1);color:#c95127}
+    .contract-card ul{margin:8px 0 0;padding-left:1.1em;color:var(--muted);font-size:clamp(10px,.8vw,12px);line-height:1.45}
+    .roadmap-gates{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin-top:18px}
+    .road-gate{position:relative;min-height:118px}
+    .road-gate:before{content:"";position:absolute;left:14px;top:13px;width:10px;height:10px;border-radius:50%;background:var(--accent)}
+    .road-gate b{padding-top:16px}
 
     /* ENDING */
     #ending .ending-center{
@@ -645,11 +688,112 @@
       }).join("");
     }
 
+    function renderTags(items = []) {
+      return items.map((item) => `<em>${esc(item)}</em>`).join("");
+    }
+
+    function renderRoleComparison(widget, index) {
+      return widgetCard(`${widgetHeader(widget)}
+        <div class="role-grid">${(widget.roles || widget.items || []).map((role) => `
+          <div class="role-card">
+            <b>${esc(role.title)}</b>
+            <span>${esc(role.goal)}</span>
+            <i class="role-code">${esc(role.code || role.kpi || "")}</i>
+          </div>
+        `).join("")}</div>`, index);
+    }
+
+    function renderDeliveryLoop(widget, index) {
+      return widgetCard(`${widgetHeader(widget)}
+        <div class="loop-wrap">${(widget.steps || widget.items || []).map((step, i) => `
+          <div class="loop-step"><b>${esc(step.title ?? step[0])}</b><span>${esc(step.text ?? step[1])}</span></div>
+        `).join("")}</div>
+        <div class="loop-center">${esc(widget.center || "Production impact")}</div>`, index);
+    }
+
+    function renderSolutionStack(widget, index) {
+      return widgetCard(`${widgetHeader(widget)}
+        <div class="solution-stack">${(widget.layers || widget.items || []).map((layer, i) => `
+          <div class="stack-layer">
+            <div class="layer-num">${esc(layer.n ?? i + 1)}</div>
+            <div><b>${esc(layer.title ?? layer[0])}</b><span>${esc(layer.text ?? layer[1])}</span></div>
+            <div class="layer-tags">${renderTags(layer.tags || [])}</div>
+          </div>
+        `).join("")}</div>`, index);
+    }
+
+    function renderIndustryMatrix(widget, index) {
+      return widgetCard(`${widgetHeader(widget)}
+        <div class="industry-grid">${(widget.industries || widget.items || []).map((item) => `
+          <div class="industry-card"><small>${esc(item.kpi || item.metric || "")}</small><b>${esc(item.industry || item.title)}</b><span>${esc(item.solution || item.text)}</span></div>
+        `).join("")}</div>`, index);
+    }
+
+    function renderMarketSignals(widget, index) {
+      return widgetCard(`${widgetHeader(widget)}
+        <div class="signal-grid">${(widget.signals || widget.items || []).map((item) => `
+          <div class="signal-card"><b>${esc(item.name || item.title)}</b><span>${esc(item.signal || item.text)}</span><i class="role-code">${esc(item.note || "")}</i></div>
+        `).join("")}</div>`, index);
+    }
+
+    function renderFitChecker(widget, index) {
+      return widgetCard(`${widgetHeader(widget)}
+        <div class="fit-grid">
+          <div class="fit-card good"><div class="mark">${esc(widget.yesLabel || "FIT")}</div>${renderPairs(widget.fit || [], "list-item")}</div>
+          <div class="fit-card bad"><div class="mark">${esc(widget.noLabel || "NO FIT")}</div>${renderPairs(widget.noFit || [], "list-item")}</div>
+        </div>`, index);
+    }
+
+    function renderKpiScorecard(widget, index) {
+      return widgetCard(`${widgetHeader(widget)}
+        <div class="kpi-grid">${(widget.kpis || widget.items || []).map((kpi) => `
+          <div class="kpi-card"><b>${esc(kpi.title)}</b><div class="kpi-value">${esc(kpi.value)}</div><span>${esc(kpi.text)}</span></div>
+        `).join("")}</div>`, index);
+    }
+
+    function renderRiskRegister(widget, index) {
+      return widgetCard(`${widgetHeader(widget)}
+        <div class="risk-grid">${(widget.risks || widget.items || []).map((risk) => `
+          <div class="risk-card"><div class="risk-level">${esc(risk.level || "RISK")}</div><b>${esc(risk.title)}</b><span>${esc(risk.text)}</span></div>
+        `).join("")}</div>`, index);
+    }
+
+    function renderContractChecklist(widget, index) {
+      return widgetCard(`${widgetHeader(widget)}
+        <div class="contract-grid">${(widget.groups || widget.items || []).map((group) => `
+          <div class="contract-card"><b>${esc(group.title)}</b><ul>${(group.items || []).map((item) => `<li>${esc(item)}</li>`).join("")}</ul></div>
+        `).join("")}</div>`, index);
+    }
+
+    function renderSprintRoadmap(widget, index) {
+      return widgetCard(`${widgetHeader(widget)}
+        <div class="roadmap-gates">${(widget.gates || widget.items || []).map((gate) => `
+          <div class="road-gate"><b>${esc(gate.title)}</b><span>${esc(gate.text)}</span></div>
+        `).join("")}</div>`, index);
+    }
+
+    function widgetHeader(widget) {
+      const label = widget.label ? `<div class="label">${esc(widget.label)}</div>` : "";
+      const title = widget.title ? `<h3>${esc(widget.title)}</h3>` : "";
+      const desc = widget.desc ? `<p>${esc(widget.desc)}</p>` : "";
+      return `${label}${title}${desc}`;
+    }
+
     function renderWidget(widget, index) {
       const type = widget.type || "text";
       const label = widget.label ? `<div class="label">${esc(widget.label)}</div>` : "";
       const title = widget.title ? `<h3>${esc(widget.title)}</h3>` : "";
       const desc = widget.desc ? `<p>${esc(widget.desc)}</p>` : "";
+      if (type === "role-comparison") return renderRoleComparison(widget, index);
+      if (type === "delivery-loop") return renderDeliveryLoop(widget, index);
+      if (type === "solution-stack") return renderSolutionStack(widget, index);
+      if (type === "industry-matrix") return renderIndustryMatrix(widget, index);
+      if (type === "market-signals") return renderMarketSignals(widget, index);
+      if (type === "fit-checker") return renderFitChecker(widget, index);
+      if (type === "kpi-scorecard") return renderKpiScorecard(widget, index);
+      if (type === "risk-register") return renderRiskRegister(widget, index);
+      if (type === "contract-checklist") return renderContractChecklist(widget, index);
+      if (type === "sprint-roadmap") return renderSprintRoadmap(widget, index);
       if (type === "metric") {
         return widgetCard(`
           ${label}${title}

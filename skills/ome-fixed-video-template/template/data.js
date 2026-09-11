@@ -101,6 +101,119 @@ window.OME_VIDEO_DATA = {
             {type:"timeline",label:"TIMELINE",title:"節奏安排",items:[["本周","跑通一個場景"],["本月","接入人物上下文"],["下月","複製更多案例"],["長期","沉澱通用能力"]]},
             {type:"tags",label:"SCOPE",title:"能力標籤",items:["RAG","Agent","Langfuse","多端入口","知識治理","權限","評測","運維"]}
           ]
+        },
+        {
+          kicker:"FDE RESEARCH PACK",
+          title:'角色邊界與 <span class="accent">交付閉環</span>',
+          subtitle:"用於講清 FDE 和相近角色的差異，以及從現場到產品反饋的閉環",
+          layout:"grid-2",
+          duration:8,
+          widgets:[
+            {type:"role-comparison",label:"ROLE MAP",title:"FDE 不是誰",roles:[
+              {title:"FDE",goal:"直接寫代碼、接系統、推上生產",code:"Production"},
+              {title:"售前",goal:"證明能做，降低購買風險",code:"Technical win"},
+              {title:"SA",goal:"定架構和約束，控制長期風險",code:"Architecture"},
+              {title:"顧問",goal:"回答為何做、做什麼、怎麼變革",code:"Business case"}
+            ]},
+            {type:"delivery-loop",label:"LOOP",title:"FDE 交付閉環",center:"可衡量業務價值",steps:[
+              ["Discovery","找高價值問題"],
+              ["Prototype","快速驗證路線"],
+              ["Production","推過上線門檻"],
+              ["Adoption","追蹤真實採用"],
+              ["Feedback","反哺產品能力"]
+            ]}
+          ]
+        },
+        {
+          kicker:"FDE RESEARCH PACK",
+          title:'三層方案與 <span class="accent">行業矩陣</span>',
+          subtitle:"用於把長篇市場方案壓成可掃描的結構",
+          layout:"grid-2",
+          duration:8,
+          widgets:[
+            {type:"solution-stack",label:"SOLUTION STACK",title:"FDE 三層方案",layers:[
+              {n:"1",title:"把產品接進去",text:"API、IAM、數據、網絡與遺留系統",tags:["Connector","SSO","Data"]},
+              {n:"2",title:"把流程重做出來",text:"Agent、Copilot、自動化與人機協作",tags:["Agent","Workflow"]},
+              {n:"3",title:"變成生產系統",text:"Evaluation、observability、SLO 與 runbook",tags:["Eval","SLO","Runbook"]}
+            ]},
+            {type:"industry-matrix",label:"INDUSTRY MATRIX",title:"行業方案速覽",industries:[
+              {industry:"SaaS",solution:"企業 RAG / Agent / 嵌入式 AI",kpi:"採用率"},
+              {industry:"製造",solution:"預測維護、質檢、OT/IT 整合",kpi:"停機率"},
+              {industry:"金融",solution:"KYC、風控、監管報告",kpi:"誤報率"},
+              {industry:"醫療",solution:"病歷摘要、文檔處理、FHIR",kpi:"周轉時間"},
+              {industry:"零售",solution:"搜索推薦、供應鏈 agent",kpi:"轉化率"},
+              {industry:"電信",solution:"AIOps、故障關聯、閉環自愈",kpi:"MTTR"}
+            ]}
+          ]
+        },
+        {
+          kicker:"FDE RESEARCH PACK",
+          title:'市場信號與 <span class="accent">適用判斷</span>',
+          subtitle:"用於回答為什麼現在值得看 FDE，以及哪些項目適合買 FDE",
+          layout:"grid-2",
+          duration:8,
+          widgets:[
+            {type:"market-signals",label:"SIGNALS",title:"市場正在升溫",signals:[
+              {name:"OpenAI",signal:"招聘覆蓋醫療、政府、法律、半導體",note:"垂直化"},
+              {name:"AWS",signal:"約 45 天密集式前線 AI 工程周期",note:"工程嵌入"},
+              {name:"Google",signal:"與 Accenture 規劃 1,000 人 FDE 隊伍",note:"規模化"},
+              {name:"BytePlus",signal:"強調 agent、eval、observability",note:"中國樣本"}
+            ]},
+            {type:"fit-checker",label:"FIT CHECK",title:"什麼項目適合 FDE",yesLabel:"適合",noLabel:"不適合",fit:[
+              ["高價值問題","有清楚業務 owner 和 KPI"],
+              ["高不確定性","路線需要邊做邊驗證"],
+              ["真實系統可接","數據、API、權限可以打通"]
+            ],noFit:[
+              ["需求完全固定","普通外包或 SI 更經濟"],
+              ["沒有 baseline","無法判斷是否產生 ROI"],
+              ["業務 owner 缺席","容易變成漂亮 PoC"]
+            ]}
+          ]
+        },
+        {
+          kicker:"FDE RESEARCH PACK",
+          title:'KPI、風險與 <span class="accent">合同治理</span>',
+          subtitle:"用於把採購與治理建議做成能落地的檢查面板",
+          layout:"grid-3",
+          duration:8,
+          widgets:[
+            {type:"kpi-scorecard",label:"SCORECARD",title:"四層 KPI",kpis:[
+              {title:"技術",value:"Eval",text:"質量、延遲、錯誤率"},
+              {title:"流程",value:"Time",text:"處理時長與人工作業"},
+              {title:"採用",value:"WAU",text:"真實使用與留存"},
+              {title:"財務",value:"Cost",text:"單任務成本與 ROI"}
+            ]},
+            {type:"risk-register",label:"RISK",title:"主要風險",risks:[
+              {level:"HIGH",title:"知識轉移",text:"能力集中在外部少數人"},
+              {level:"HIGH",title:"過度定制",text:"每個客戶都變成一次性代碼"},
+              {level:"MED",title:"合規安全",text:"FDE 進入客戶數據和生產環境"},
+              {level:"MED",title:"Vendor lock-in",text:"模型、雲、應用與運維同時耦合"},
+              {level:"MED",title:"成本漂移",text:"Token、雲資源與支持成本被低估"},
+              {level:"LOW",title:"歸因失真",text:"模型指標好但業務沒有改善"}
+            ]},
+            {type:"contract-checklist",label:"CONTRACT",title:"合同附件",groups:[
+              {title:"SOW/KPI",items:["Production 定義","baseline","驗收窗口"]},
+              {title:"IP/數據",items:["代碼權利","eval corpus","日志歸屬"]},
+              {title:"安全",items:["短期憑證","審計日志","P0/P1 定義"]},
+              {title:"退出",items:["runbook","IaC","客戶演練"]}
+            ]}
+          ]
+        },
+        {
+          kicker:"FDE RESEARCH PACK",
+          title:'6-12 週 <span class="accent">FDE Sprint</span>',
+          subtitle:"用於把報告結論收束成企業採用路線圖",
+          layout:"stack",
+          duration:8,
+          widgets:[
+            {type:"sprint-roadmap",label:"SPRINT ROADMAP",title:"從不確定問題到生產價值",gates:[
+              {title:"選題",text:"高價值業務問題與 owner"},
+              {title:"基線",text:"建立技術、流程、採用、成本 KPI"},
+              {title:"衝刺",text:"FDE 進場接系統、做原型、推生產"},
+              {title:"門檻",text:"Production gate 與安全治理"},
+              {title:"移交",text:"代碼、eval、runbook、演練與擴展"}
+            ]}
+          ]
         }
       ]
     };
